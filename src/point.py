@@ -16,7 +16,7 @@ class Color:
 
 
 class Point:
-    def __init__(self, x, y, z, color: Color | None = None, size = 1) -> None:
+    def __init__(self, x: float | int, y: float | int, z: float | int, color: Color | None = None, size = 1) -> None:
         self._x = x
         self._y = y
         self._z = z
@@ -25,6 +25,7 @@ class Point:
         self._is_active = False # for later use when selecting points
 
     def get_coords(self):
+        # For computational convenience when dealing with curves
         return np.array([self._x, self._y, self._z]).T
 
     def draw_point(self):
