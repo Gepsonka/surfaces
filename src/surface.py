@@ -157,19 +157,14 @@ class Surface:
         n = len(self._control_polyhedron._control_points)
         m = len(self._control_polyhedron._control_points[0])
         numerical_point = np.zeros(3)
-        #print("surface: ", self._surface_function(v, 1, n))
-        total_runs = 0
         for i in range(n):
             for j in range(m):
                 numerical_point += self._surface_function(u, i, n - 1) * self._surface_function(v, j, m - 1) * self._control_polyhedron._control_points[i][j].get_coords_numerical()
-                total_runs += 1
 
-        print(total_runs)
         return numerical_point
 
     def _calculate_surface_points(self):
         '''Populates the _mesh_points data matrix'''
-        total_steps = 0
         u, v = 0, 0
         buffer_list = []
 
@@ -178,14 +173,12 @@ class Surface:
                 numerical_point = self._calculate_surface_point(u, v)
                 buffer_list.append(Point(numerical_point[0], numerical_point[1], numerical_point[2]))
                 v+= self._step
-                total_steps +=1
             self._mesh_points.append(buffer_list)
             buffer_list = []
             u += self._step
             v = 0
 
 
-        print(total_steps)
     def set_surface_visibility(self):
         self._show_surface = not self._show_surface
 
@@ -205,6 +198,19 @@ class BezierSurface(Surface):
         return math.comb(n, index) * math.pow(t, index) * math.pow(1-t, n-index)
         #return math.comb(n, index) * math.pow(t, index) * math.pow(1 - t, n - index)
 
+
+class BsplineSurface(Surface):
+    def __init__(self, control_points = DEFAULT_CONTROL_POINTS, step = 0.1):
+        super().__init__(control_points, step)
+
+    def _surface_function(self, t, index, n):
+        '''
+        Bernstein polynomial.
+        u - function parameter, range -> [0, 1]
+        index - index of current point
+        n - total number of points - 1
+        '''
+        return math.comb(n, index) * math.pow(t, index) * math.pow(1-t, n-index)
 
 
 surface = BezierSurface()
