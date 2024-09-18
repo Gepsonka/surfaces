@@ -4,7 +4,6 @@ import OpenGL.GLU as glu
 from opengl import displayFunction, initGlut, resizeFunction
 
 
-
 def main():
     print("Running...")
     initGlut(displayFunction, resizeFunction)

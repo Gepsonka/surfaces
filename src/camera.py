@@ -17,4 +17,4 @@ class Camera:
         gluLookAt(*self._coords, *self._looking_at, *self._up_vec)
 
 
-camera = Camera((25.0, 25.0, 70.0), (25.0, 25.0, 0.0), (0.0, 1.0, 0.0))
+camera = Camera((50.0, 50.0, 300.0), (50.0, 50.0, 0.0), (0.0, 1.0, 0.0))

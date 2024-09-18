@@ -3,13 +3,16 @@ from OpenGL.GLUT import *
 from OpenGL.GLU import *
 from OpenGL.GL import *
 from camera import camera
+from menu import Menu
+from surface import surface
 
 WINDOW_SIZE = (1200, 800)
 WINDOW_POSITION = (50, 50)
 WINDOW_TITLE = b"Surfaces"
 
 
-
+def optionClick(x):
+    print(x)
 
 
 def initGlut(
@@ -37,6 +40,8 @@ def initGlut(
 
     glClearColor(0.0, 0.0, 0.0, 1.0)
 
+    Menu(optionClick)
+
     glutMainLoop()
 
 
@@ -44,7 +49,7 @@ def resizeFunction(w, h):
     glViewport(0, 0, w, h)
     glMatrixMode(GL_PROJECTION)
     glLoadIdentity()
-    gluPerspective(45.0, w / h, 0.1, 100.0)
+    gluPerspective(45.0, w / h, 0.1, 1000.0)
     glMatrixMode(GL_MODELVIEW)
     glLoadIdentity()
 
@@ -58,13 +63,6 @@ def displayFunction():
 
     camera.init_camera()
 
-    glBegin(GL_TRIANGLES)
-    glColor3f(1.0, 0.0, 0.0)  # Red color
-    glVertex3f(20.0, 20.0, 0.0)
-    glColor3f(0.0, 1.0, 0.0)  # Green color
-    glVertex3f(25.0, 30.0, 0.0)
-    glColor3f(0.0, 0.0, 1.0)  # Blue color
-    glVertex3f(40.0, 20.0, 0.0)
-    glEnd()
+    surface.draw()
 
     glutSwapBuffers()
