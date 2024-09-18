@@ -27,7 +27,7 @@ class Point:
 
     def get_coords_numerical(self):
         # For computational convenience when dealing with curves
-        return np.array([self._x, self._y, self._z]).T
+        return np.array([self._x, self._y, self._z])
 
     def get_coords_tuple(self):
         return (self._x, self._y, self._z)
