@@ -103,8 +103,7 @@ class Surface:
         self._show_surface_points = True
         self._show_control_polyhedron = True
 
-        # for efficiency....later it needs to be calculated frequently
-        self._calculate_surface_points()
+
 
     def draw(self):
         glTranslatef(0, 0, 0)
@@ -188,6 +187,9 @@ class BezierSurface(Surface):
     def __init__(self, control_points = DEFAULT_CONTROL_POINTS, step = 0.1):
         super().__init__(control_points, step)
 
+        # for efficiency....later it needs to be calculated frequently
+        self._calculate_surface_points()
+
     def _surface_function(self, t, index, n):
         '''
         Bernstein polynomial.
@@ -200,17 +202,57 @@ class BezierSurface(Surface):
 
 
 class BsplineSurface(Surface):
-    def __init__(self, control_points = DEFAULT_CONTROL_POINTS, step = 0.1):
+    def __init__(self, control_points = DEFAULT_CONTROL_POINTS, step = 0.1, knot_u = [0, 0, 0, 1, 1, 1.5, 1.5, 2, 2], knot_v = [0, 0, 0, 1, 1, 1.5, 1.5, 2, 2, 3]):
         super().__init__(control_points, step)
+        # h/k piece of knots in the each direction must hold: h = m + p + 1 (p is the degree)
+        self._knot_u = knot_u
+        self._knot_v = knot_v
 
-    def _surface_function(self, t, index, n):
+        # TODO: raise exeptions if the degrees are incorrect
+        self._p = len(knot_u) - len(self._control_polyhedron.get_control_points()) - 1 - 1 # degree in u direction
+        self._q = len(knot_v) - len(self._control_polyhedron.get_control_points()[0]) - 1 - 1 # degree in v direction
+
+        # for efficiency....later it needs to be calculated frequently
+        self._calculate_surface_points()
+
+
+    def _calculate_surface_point(self, u, v):
+        n = len(self._control_polyhedron._control_points)
+        m = len(self._control_polyhedron._control_points[0])
+        numerical_point = np.zeros(3)
+        for i in range(n):
+            for j in range(m):
+                numerical_point += self._surface_function(u, i, self._p, self._knot_u) * self._surface_function(v, j, self._q, self._knot_v) * self._control_polyhedron._control_points[i][j].get_coords_numerical()
+
+        return numerical_point
+
+    def _surface_function(self, t, index, n, knot: list[float] = []):
         '''
         Bernstein polynomial.
         u - function parameter, range -> [0, 1]
         index - index of current point
-        n - total number of points - 1
+        n - degree
+        knot - knot vector when calculating bsplines
         '''
-        return math.comb(n, index) * math.pow(t, index) * math.pow(1-t, n-index)
+        if n == 0:
+            if t >= knot[index] and t < knot[index+1] or (t == knot[-1] and index == len(knot) - 2):
+                return 1
+            else:
+                return 0
+
+        # guard against zero divison
+        if knot[index + n] == knot[index]:
+            first_term = 0
+        else:
+            first_term = ((t - knot[index]) / (knot[index + n] - knot[index])) * self._surface_function(t, index, n-1, knot)
+
+        if knot[index + n + 1] == knot[index + 1]:
+            second_term = 0
+        else:
+            second_term = ((knot[index + n + 1] - t) / (knot[index + n + 1] - knot[index + 1])) * self._surface_function(t, index + 1, n-1, knot)
 
 
-surface = BezierSurface()
+        return first_term + second_term
+
+
+surface = BsplineSurface()
