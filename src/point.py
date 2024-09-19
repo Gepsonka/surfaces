@@ -44,3 +44,6 @@ class Point:
 
     def _draw_axis_arrows(self):
         pass
+
+    def __str__(self):
+        return str(self.get_coords_tuple())

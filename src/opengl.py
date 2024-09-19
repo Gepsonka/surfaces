@@ -3,7 +3,6 @@ from OpenGL.GLUT import *
 from OpenGL.GLU import *
 from OpenGL.GL import *
 from camera import camera
-from menu import Menu
 from surface import surface
 
 WINDOW_SIZE = (1200, 800)
@@ -11,8 +10,6 @@ WINDOW_POSITION = (50, 50)
 WINDOW_TITLE = b"Surfaces"
 
 
-def optionClick(x):
-    print(x)
 
 
 def initGlut(
@@ -40,7 +37,6 @@ def initGlut(
 
     glClearColor(0.0, 0.0, 0.0, 1.0)
 
-    Menu(optionClick)
 
     glutMainLoop()
 
@@ -64,5 +60,6 @@ def displayFunction():
     camera.init_camera()
 
     surface.draw()
+
 
     glutSwapBuffers()
