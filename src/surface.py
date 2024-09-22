@@ -343,8 +343,8 @@ class BsplineSurfaceModel(SurfaceModel):
         step=0.1,
         degree_p=3,
         degree_q=3,
-        knot_u=[0, 0, 0, 0.2, 0.2, 0.5, 0.5, 0.7, 1],
-        knot_v=[0, 0, 0, 0.3, 0.3, 0.5, 0.5, 1],
+        knot_u = [0, 0, 0, 0.2, 0.4, 0.6, 0.8, 1, 1],
+        knot_v = [0, 0, 0, 0.3, 0.5, 0.7, 1, 1],
     ):
         super().__init__(control_points, step)
         # h/k piece of knots in the each direction must hold: h = m + p + 1 (p is the degree)
@@ -358,22 +358,30 @@ class BsplineSurfaceModel(SurfaceModel):
         self._degree_p = degree_p  # degree in u direction
         self._degree_q = degree_q  # degree in v direction
 
-        # if len(self._knot_u) - 1 == self._m + self._p + 1:
-        #     raise Exception(f'''Bad u knot vector\n
-        #             h =  {len(self._knot_u)}
-        #             m + p + 1 = {self._m + self._p + 1}
-        #         ''')
+        self._flattened_control_points = self.control_polyhedron.get_control_points()
 
-        # if len(self._knot_v) - 1 == self._n + self._q + 1:
-        #     raise Exception(f'''Bad u knot vector\n
-        #             h =  {len(self._knot_v)}
-        #             m + p + 1 = {self._n + self._q + 1}
-        #         ''')
+        if len(self._knot_u) != self._m + self._degree_p + 2:
+            raise ValueError(f"Bad u knot vector: len(knot_u) = {len(self._knot_u)}, should be {self._m + self._degree_p + 2}")
+        if len(self._knot_v) != self._n + self._degree_q + 2:
+            raise ValueError(f"Bad v knot vector: len(knot_v) = {len(self._knot_v)}, should be {self._n + self._degree_q + 2}")
+
 
         # for efficiency....later it needs to be calculated frequently, when controls are added
         self._calculate_surface_points()
 
     def _calculate_surface_point(self, u, v):
+        # span_u = self._find_knot_span(u, self._knot_u, self._degree_p)
+        # span_v = self._find_knot_span(u, self._knot_u, self._degree_p)
+
+        # temp_points = []
+        # for i in range(span_v - self._degree_q, span_v + 1):
+        #     ctrl_pts_u = [self.control_polyhedron.get_control_points()[i][j].get_coords_numerical() for j in range(len(self.control_polyhedron.get_control_points()[i]))]
+        #     temp_points.append(self._de_boor(span_u, self._degree_p, u, self._knot_u, ctrl_pts_u))
+
+        # final_point = self._de_boor(span_v, self._degree_q, v, self._knot_v, temp_points)
+
+        # return np.array(final_point)
+        #
         numerical_point = np.zeros(3)
         for i in range(self._m + 1):
             for j in range(self._n + 1):
@@ -383,6 +391,7 @@ class BsplineSurfaceModel(SurfaceModel):
                     * self.control_polyhedron.get_control_points()[i][j].get_coords_numerical()
                 )
 
+        print(numerical_point)
         return numerical_point
 
     def _surface_function(self, t, index, n, knot: list[float] = []):
@@ -393,12 +402,9 @@ class BsplineSurfaceModel(SurfaceModel):
         n - degree
         knot - knot vector when calculating bsplines
         """
-
         if n == 0:
-            if t >= knot[index] and t < knot[index + 1]:
-                return 1
-            else:
-                return 0
+            #return 1.0 if knot[index] <= t < knot[index + 1] or (t == knot[-1] and index == len(knot) - 2) else 0.0
+            return 1.0 if knot[index] <= t < knot[index + 1] else 0.0
 
         # guard against zero divison
         if knot[index + n] == knot[index]:
@@ -417,6 +423,47 @@ class BsplineSurfaceModel(SurfaceModel):
 
         return first_term + second_term
 
+
+    def _de_boor(self, k, degree, u, knots, control_points):
+        """
+        De Boor algorithm for evaluating B-spline curves.
+        """
+        d = [control_points[j] for j in range(k - degree, k + 1)]
+
+        print("d: ",d)
+
+        for r in range(1, degree + 1):
+            for j in range(degree, r - 1, -1):
+                d_1 = d[j - 1]
+                d_2 = d[j]
+                alpha = (u - knots[k - degree + j]) / (knots[j + k - r + 1] - knots[k - degree + j])
+                d[j] = (1.0 - alpha) * d_1 + alpha * d_2
+
+        return d[degree]
+
+    def _find_knot_span(self, u, knots, degree):
+        """
+        Determines the knot span index for a given parameter u.
+        """
+        n = len(knots) - degree - 1  # Number of control points - 1
+        if u == knots[n + 1]:
+            return n
+
+        if u >= knots[n + 1]:
+                return n
+        low = degree
+        high = n + 1
+        mid = (low + high) // 2
+
+        # Binary search to find the span
+        while high - low > 1:
+            mid = (low + high) // 2
+            if u < knots[mid]:
+                high = mid
+            else:
+                low = mid
+
+        return low
 
 global surface
 surface = SurfaceDisplay(BezierSurfaceModel())
