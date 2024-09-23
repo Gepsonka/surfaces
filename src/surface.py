@@ -1,6 +1,7 @@
 from point import Color, Point
 import numpy as np
 from OpenGL.GL import *
+from OpenGL.GLU import *
 import math
 
 
@@ -67,6 +68,8 @@ class ControlPolyhedron:
         if self._show_control_points_frame:
             self._draw_control_points_frame()
 
+        self.draw_control_point_arrows()
+
     def _process_init_control_points(
         self, init_control_points: list[list[tuple[float, float, float]]]
     ):
@@ -91,7 +94,7 @@ class ControlPolyhedron:
         for point_list in self._control_points:
             for point in point_list:
                 point.set_point_color()
-                point.draw_vertex()
+                point.draw()
         glEnd()
 
     def _draw_control_points_frame(self):
@@ -127,7 +130,7 @@ class ControlPolyhedron:
         glPointSize(point_size)
         glBegin(GL_POINTS)
         self.get_bounding_box_center().set_point_color()
-        self.get_bounding_box_center().draw_vertex()
+        self.get_bounding_box_center().draw()
         glEnd()
 
     def toggle_control_points_frame_visibility(self):
@@ -188,6 +191,15 @@ class ControlPolyhedron:
 
         return buffer_list
 
+    def draw_control_point_arrows(self):
+        for row in self.get_control_points():
+            for point in row:
+                point.draw_arrows()
+
+
+    def check_click(self):
+        pass
+
 
 class SurfaceModel:
     def __init__(self, control_points=DEFAULT_CONTROL_POINTS, step=0.1) -> None:
@@ -219,7 +231,6 @@ class SurfaceModel:
                     Point(numerical_point[0], numerical_point[1], numerical_point[2])
                 )
             self._mesh_points.append(buffer_list)
-            print("buffer_list:", buffer_list)
             buffer_list = []
             v = np.arange(0, 1 + self._step, self._step)
 
@@ -268,6 +279,7 @@ class SurfaceDisplay:
 
         if self._show_surface_points:
             self._draw_surface_points()
+
 
     def _draw_surface_points(self):
         if len(self._surface_model._mesh_points) == 0:
@@ -427,7 +439,6 @@ class BsplineSurfaceModel(SurfaceModel):
 
     def _generate_uniform_knot_vector(self, num_control_points, degree):
         num_knots = num_control_points + degree + 1
-        print("knot vector len:", num_knots)
         knot_vector = []
 
         knot_vector.extend([0] * (degree + 1))

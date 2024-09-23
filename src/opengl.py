@@ -35,8 +35,9 @@ def initGlut(
     if glutSpecialFunc is not None:
         glutSpecialFunc(specialFunc)
 
-    glClearColor(0.0, 0.0, 0.0, 1.0)
+    glShadeModel(GL_SMOOTH)
 
+    glClearColor(0.0, 0.0, 0.0, 1.0)
 
     glutMainLoop()
 
