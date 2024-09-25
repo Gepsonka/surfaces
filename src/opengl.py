@@ -3,8 +3,7 @@ from OpenGL.GLUT import *
 from OpenGL.GLU import *
 from OpenGL.GL import *
 from camera import camera
-from surface import surface
-
+from surface_display import surface
 WINDOW_SIZE = (1200, 800)
 WINDOW_POSITION = (50, 50)
 WINDOW_TITLE = b"Surfaces"

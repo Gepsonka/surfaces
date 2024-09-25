@@ -1,6 +1,9 @@
 from OpenGL.GLUT import *
-from surface import BezierSurfaceModel, BsplineSurfaceModel, NURBSModel, SurfaceDisplay, surface
+from surfaces.bezier import BezierSurfaceModel
+from surfaces.bspline import BsplineSurfaceModel
+from surfaces.nurbs import NURBSModel
 from typing import Callable
+from surface_display import surface
 
 ROTATE_SENSITIVITY_ANGLE = 5
 
