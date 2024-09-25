@@ -28,7 +28,6 @@ class Arrow:
     def __init__(self, point_window_coords):
         self._point_window_coords = point_window_coords
 
-        print(point_window_coords)
 
 
     def draw_arrows(self):
@@ -164,7 +163,6 @@ class Point:
         self._is_active = not self._is_active
 
     def _get_transformed_point_coords(self):
-        print('original point in space:', self.get_coords_tuple())
         modelview_matrix = glGetFloatv(GL_MODELVIEW_MATRIX)
         projection_matrix = glGetFloatv(GL_PROJECTION_MATRIX)
         modelview_matrix = np.array(modelview_matrix).reshape(4, 4)
@@ -179,8 +177,6 @@ class Point:
         # if transformed_point[3] != 0:
         #     transformed_point /= transformed_point[3]
 
-
-        print('to be transformed point coords:', transformed_point)
 
         return transformed_point
 

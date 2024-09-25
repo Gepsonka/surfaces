@@ -1,5 +1,5 @@
 from OpenGL.GLUT import *
-from surface import BezierSurfaceModel, BsplineSurfaceModel, SurfaceDisplay, surface
+from surface import BezierSurfaceModel, BsplineSurfaceModel, NURBSModel, SurfaceDisplay, surface
 from typing import Callable
 
 ROTATE_SENSITIVITY_ANGLE = 5
@@ -30,6 +30,9 @@ def keyboardFunction(key, x: int, y: int):
         glutPostRedisplay()
     elif key == '2':
         surface.swich_surface_model(BsplineSurfaceModel())
+        glutPostRedisplay()
+    elif key == '3':
+        surface.swich_surface_model(NURBSModel())
         glutPostRedisplay()
 
 
