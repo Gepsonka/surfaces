@@ -49,11 +49,11 @@ class SurfaceDisplay:
 
         glColor3f(0.0, 0.0, 1.0)
         glPointSize(3)
-        glBegin(GL_POINTS)
-        for i, surface_point_list in enumerate(self._surface_model._mesh_points):
-            for j, _ in enumerate(surface_point_list):
-                glVertex3f(*self._surface_model._mesh_points[i][j].get_coords_tuple())
-        glEnd()
+
+        for surface_point_list in self._surface_model._mesh_points:
+            for point in surface_point_list:
+                point.draw()
+
 
     def _draw_surface_mesh(self):
         if len(self._surface_model._mesh_points) == 0:
@@ -89,6 +89,8 @@ class SurfaceDisplay:
 
     def toggle_surface_points_visiblity(self):
         self._show_surface_points = not self._show_surface_points
+
+
 
 
 global surface

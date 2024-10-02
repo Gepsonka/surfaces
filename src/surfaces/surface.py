@@ -4,17 +4,17 @@ from OpenGL.GL import *
 from OpenGL.GLU import *
 import math
 from surfaces.constants import DEFAULT_CONTROL_POINTS
-from surfaces.control_polyhedron import ControlPolyhedron
+from surfaces.control_polyhedron import ControlPolyhedron, control_polyhedron
 
 class SurfaceModel:
-    def __init__(self, control_points=DEFAULT_CONTROL_POINTS, step=0.1) -> None:
+    def __init__(self, control_polyhedon: ControlPolyhedron=control_polyhedron, step=0.1) -> None:
         # Making sure the step covers the whole [0,1] interval
         if (1 / step) % 1 != 0:
             raise Exception("(1 / step) % 1 must be equal to 0!")
 
         self._mesh_points: list[list[Point]] = []
 
-        self.control_polyhedron: ControlPolyhedron = ControlPolyhedron(control_points)
+        self.control_polyhedron: ControlPolyhedron = control_polyhedron
         self._step = step  # To step the parameters of the surface functions
 
     def _surface_function(self, t, index, n, knot: list[float] = []) -> float:

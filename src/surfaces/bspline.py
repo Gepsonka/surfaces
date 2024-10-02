@@ -52,11 +52,15 @@ class BsplineSurfaceModel(SurfaceModel):
         n - degree
         knot - knot vector when calculating bsplines
         """
+        epsilon = 1e-6  # Tolerance for floating-point precision
+
+        # Base case: degree 0
         if n == 0:
-            if knot[index] <= t < knot[index + 1] or (t == knot[-1] and index == len(knot) - 2):
+            # Handle boundary case when t is very close to the last knot
+            if knot[index] <= t < knot[index + 1] or (abs(t - knot[-1]) < epsilon and index == len(knot) - 2):
                 return 1.0
             else:
-                return 0
+                return 0.0
 
         # guard against zero divison
         if knot[index + n] == knot[index]:
@@ -87,4 +91,16 @@ class BsplineSurfaceModel(SurfaceModel):
             knot_vector.append(i / (num_internal_knots + 1))
 
         knot_vector.extend([1] * (degree + 1))
+        print(knot_vector)
         return knot_vector
+        # n = num_control_points - 1
+        # m = n + degree + 1  # Total
+
+        # knot_vector = [0] * (degree + 1)  # Start with p+1 zeros
+
+        # for i in range(1, m - 2 * degree):
+        #     knot_vector.append(i)
+
+        # knot_vector += [m - 2 * degree] * (degree + 1)  # End with p+1 values of m-2p
+
+        # return knot_vector

@@ -13,8 +13,6 @@ class NURBSModel(BsplineSurfaceModel):
 
         super().__init__(control_points, step, degree_u, degree_v)
 
-
-
     def _generate_weights(self, x, y):
         return np.ones((x,y))
 

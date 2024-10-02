@@ -29,7 +29,6 @@ class ControlPolyhedron:
         if self._show_control_points_frame:
             self._draw_control_points_frame()
 
-        self.draw_control_point_arrows()
 
     def _process_init_control_points(
         self, init_control_points: list[list[tuple[float, float, float]]]
@@ -37,26 +36,25 @@ class ControlPolyhedron:
         buffer_list = []
         for control_point_line in init_control_points:
             for control_point in control_point_line:
-                buffer_list.append(
-                    Point(
-                        control_point[0],
-                        control_point[1],
-                        control_point[2],
-                        Color(0.0, 0.0, 0.0),
-                    )
+                point = Point(
+                    control_point[0],
+                    control_point[1],
+                    control_point[2],
+                    Color(0.0, 0.0, 0.0),
                 )
+                point.toggle_selected()
+
+                buffer_list.append(point)
 
             self._control_points.append(buffer_list)
             buffer_list = []
 
     def _draw_control_points(self):
         glPointSize(self._point_size)
-        glBegin(GL_POINTS)
         for point_list in self._control_points:
             for point in point_list:
                 point.set_point_color()
                 point.draw()
-        glEnd()
 
     def _draw_control_points_frame(self):
         glColor3f(*self._frame_color)
@@ -152,11 +150,8 @@ class ControlPolyhedron:
 
         return buffer_list
 
-    def draw_control_point_arrows(self):
-        for row in self.get_control_points():
-            for point in row:
-                point.draw_arrows()
-
-
     def check_click(self):
         pass
+
+
+control_polyhedron = ControlPolyhedron()
