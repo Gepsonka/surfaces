@@ -4,11 +4,13 @@ from OpenGL.GLU import *
 from OpenGL.GL import *
 from camera import camera
 from surface_display import surface
+
 WINDOW_SIZE = (1200, 800)
 WINDOW_POSITION = (50, 50)
 WINDOW_TITLE = b"Surfaces"
 
-
+NEAR_CLIPPING_PLANE = 0.1
+FAR_CLIPPING_PLANE = 1000.0
 
 
 def initGlut(
@@ -16,6 +18,7 @@ def initGlut(
     resizeFunc: Callable[[int, int], None] | None = None,
     keyboardFunc: Callable[[int, int, int], None] | None = None,
     specialFunc: Callable[[int, int, int], None] | None = None,
+    mouseFunc: Callable[[int, int, int, int], None] | None = None
 ) -> None:
     glutInit()
     # glutInitContextVersion(4, 1)
@@ -34,6 +37,9 @@ def initGlut(
     if glutSpecialFunc is not None:
         glutSpecialFunc(specialFunc)
 
+    if mouseFunc is not None:
+        glutMouseFunc(mouseFunc)
+
     glShadeModel(GL_SMOOTH)
 
     glClearColor(0.0, 0.0, 0.0, 1.0)
@@ -42,10 +48,11 @@ def initGlut(
 
 
 def resizeFunction(w, h):
+    WINDOW_SIZE = (w, h) # bad practice, never do this!
     glViewport(0, 0, w, h)
     glMatrixMode(GL_PROJECTION)
     glLoadIdentity()
-    gluPerspective(45.0, w / h, 0.1, 1000.0)
+    gluPerspective(45.0, w / h, NEAR_CLIPPING_PLANE, FAR_CLIPPING_PLANE)
     glMatrixMode(GL_MODELVIEW)
     glLoadIdentity()
 

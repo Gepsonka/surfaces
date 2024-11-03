@@ -42,7 +42,7 @@ class ControlPolyhedron:
                     control_point[2],
                     Color(0.0, 0.0, 0.0),
                 )
-                point.toggle_selected()
+                # point.toggle_selected()
 
                 buffer_list.append(point)
 

@@ -23,10 +23,10 @@ class BsplineSurfaceModel(SurfaceModel):
         self._knot_u = self._generate_uniform_knot_vector(self._m + 1, self._degree_u)
         self._knot_v = self._generate_uniform_knot_vector(self._n + 1, self._degree_v)
 
-        if len(self._knot_u) != self._m + self._degree_u + 2:
-            raise ValueError(f"Bad u knot vector: len(knot_u) = {len(self._knot_u)}, should be {self._m + self._degree_u + 2}")
-        if len(self._knot_v) != self._n + self._degree_v + 2:
-            raise ValueError(f"Bad v knot vector: len(knot_v) = {len(self._knot_v)}, should be {self._n + self._degree_v+ 2}")
+        # if len(self._knot_u) != self._m + self._degree_u + 2:
+        #     raise ValueError(f"Bad u knot vector: len(knot_u) = {len(self._knot_u)}, should be {self._m + self._degree_u + 2}")
+        # if len(self._knot_v) != self._n + self._degree_v + 2:
+        #     raise ValueError(f"Bad v knot vector: len(knot_v) = {len(self._knot_v)}, should be {self._n + self._degree_v+ 2}")
 
 
         # for efficiency....later it needs to be calculated frequently, when controls are added
