@@ -154,21 +154,23 @@ class ControlPolyhedron:
 
     def select_point(self, i, j):
         if self._selected_point:
-            self._selected_point.toggle_selected()
-        self._selected_point = self._control_points[i][j]
-        self._selected_point.toggle_selected()
+            self._control_points[i][j].toggle_selected()
+        self._selected_point = (i, j)
+        self._control_points[i][j].toggle_selected()
 
-    def get_selected_point(self):
+    def move_selected_point(self, x: float, y: float, z: float):
+        if self._selected_point is not None:
+            self._control_points[self._selected_point[0]][self._selected_point[1]].move(
+                x, y, z
+            )
+
+    def get_selected_point_index(self):
         return self._selected_point
     
     def deselect_point(self):
         if self._selected_point is not None:
-            self._selected_point.toggle_selected()
+            self._control_points[self._selected_point[0]][self._selected_point[1]].toggle_selected()
             self._selected_point = None
-
-    def change_move_axis(self, axis):
-        if self._selected_point is not None:
-            self._selected_point.change_move_axis(axis)
         
 
 

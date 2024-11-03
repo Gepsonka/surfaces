@@ -168,5 +168,13 @@ class Point:
     def get_viewport_coordinates(self):
         pass
 
+    def move(self, x: float, y: float, z: float):
+        self._x += x
+        self._y += y
+        self._z += z
+        self._arrow = Arrow(self.get_coords_tuple())
+    
     def __str__(self):
         return str(self.get_coords_tuple())
+    
+    

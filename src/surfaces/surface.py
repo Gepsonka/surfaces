@@ -25,6 +25,8 @@ class SurfaceModel:
 
     def _calculate_surface_points(self):
         """Populates the _mesh_points data matrix"""
+        self._mesh_points = []
+
         u_range, v_range = np.arange(0, 1 + self._step, self._step), np.arange(0, 1 + self._step, self._step)
 
         buffer_list = []

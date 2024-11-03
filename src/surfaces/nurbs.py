@@ -6,12 +6,15 @@ class NURBSModel(BsplineSurfaceModel):
     def __init__(self, control_points=DEFAULT_CONTROL_POINTS, step=DEFAULT_STEP, degree_u=DEFAULT_DEGREE_U, degree_v=DEFAULT_DEGREE_V, knot_u=DEFAULT_U_KNOT_VECTOR, knot_v=DEFAULT_V_KNOT_VECTOR):
         # Had to do this because of the cross dependencies of variables
         self.weights = self._generate_weights(len(control_points), len(control_points[0]))
-        self.weights[2][2] = 10
+        # self.weights[2][2] = 10
 
         self._m = len(control_points)
         self._n = len(control_points[0])
 
         super().__init__(control_points, step, degree_u, degree_v)
+
+    def change_weight_on_index(self, i, j, value):
+        self.weights[i][j] += value
 
     def _generate_weights(self, x, y):
         return np.ones((x,y))

@@ -12,10 +12,34 @@ from surface_display import surface
 import numpy as np
 
 ROTATE_SENSITIVITY_ANGLE = 5
+POINT_MOVE_SENSITIVITY = 5
+CONTROL_POINT_WEIGHT_CHANGE_SENSITIVITY = 5
 
 
 def keyboardFunction(key, x: int, y: int):
     key = key.decode('utf-8')
+
+    if control_polyhedron.get_selected_point_index() is not None:
+        if key == ',':
+            control_polyhedron.move_selected_point(0, 0, -POINT_MOVE_SENSITIVITY)
+            surface._surface_model._calculate_surface_points()
+            glutPostRedisplay()
+        elif key == '.':
+            control_polyhedron.move_selected_point(0, 0, POINT_MOVE_SENSITIVITY)
+            surface._surface_model._calculate_surface_points()
+            glutPostRedisplay()
+        
+        if type(surface._surface_model) == NURBSModel:
+            if key == '+':
+                surface._surface_model.change_weight_on_index(*control_polyhedron.get_selected_point_index(), CONTROL_POINT_WEIGHT_CHANGE_SENSITIVITY)
+                surface._surface_model._calculate_surface_points()
+                glutPostRedisplay()
+            if key == '-':
+                surface._surface_model.change_weight_on_index(*control_polyhedron.get_selected_point_index(), -CONTROL_POINT_WEIGHT_CHANGE_SENSITIVITY)
+                surface._surface_model._calculate_surface_points()
+                glutPostRedisplay()
+        return
+
     if key == ']':
         surface._surface_model.control_polyhedron.toggle_control_points_visibility()
         glutPostRedisplay()
@@ -46,6 +70,27 @@ def keyboardFunction(key, x: int, y: int):
 
 
 def specialKeyboardFunction(key, x: int, y: int):
+    if control_polyhedron.get_selected_point_index() is not None:
+        if key == GLUT_KEY_LEFT:
+            control_polyhedron.move_selected_point(-POINT_MOVE_SENSITIVITY, 0, 0)
+            surface._surface_model._calculate_surface_points()
+            glutPostRedisplay()
+        elif key == GLUT_KEY_RIGHT:
+            control_polyhedron.move_selected_point(POINT_MOVE_SENSITIVITY, 0, 0)
+            surface._surface_model._calculate_surface_points()
+            glutPostRedisplay()
+        elif key == GLUT_KEY_UP:
+            control_polyhedron.move_selected_point(0, POINT_MOVE_SENSITIVITY, 0)
+            surface._surface_model._calculate_surface_points()
+            glutPostRedisplay()
+        elif key == GLUT_KEY_DOWN:
+            control_polyhedron.move_selected_point(0, -POINT_MOVE_SENSITIVITY, 0)
+            surface._surface_model._calculate_surface_points()
+            glutPostRedisplay()
+
+        
+        return 
+
     if key == GLUT_KEY_UP:
         surface._rotate_angle_x += ROTATE_SENSITIVITY_ANGLE
         glutPostRedisplay()
