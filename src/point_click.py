@@ -15,9 +15,9 @@ class RayPicker:
         self.projection = glGetDoublev(GL_PROJECTION_MATRIX)
         self.viewport = glGetIntegerv(GL_VIEWPORT)
 
-        print(f"Modelview: {self.modelview.tolist()}")
-        print(f"Projection: {self.projection.tolist()}")
-        print(f"Viewport: {self.viewport.tolist()}")
+        print(f"Modelview: {self.modelview}")
+        print(f"Projection: {self.projection}")
+        print(f"Viewport: {self.viewport}")
         
         # Correct y coordinate
         y = self.viewport[3] - y      
@@ -88,3 +88,25 @@ class RayPicker:
         
         # Check if point is close enough to ray and in front of camera
         return distance < threshold and t > 0
+    
+
+# temporary solution
+# check if the pixel is in the threshold of a rendered point
+# if it is, return the distance to the point from the click
+# if it is not, return None
+def pick(x, y, point, threshold=3):
+    # Project point to screen coordinates
+    viewport = glGetIntegerv(GL_VIEWPORT)
+    modelview = glGetDoublev(GL_MODELVIEW_MATRIX)
+    projection = glGetDoublev(GL_PROJECTION_MATRIX)
+
+    # correct y coordinate
+    y = viewport[3] - y
+
+    winX, winY, winZ = gluProject(*point, modelview, projection, viewport)
+
+    # Check if the click is within the threshold of the point
+    if abs(winX - x) < threshold and abs(winY - y) < threshold:
+        # Calculate the distance between the projected point and the click
+        distance = np.linalg.norm([winX - x, winY - y])
+        return distance

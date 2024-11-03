@@ -2,7 +2,7 @@ from OpenGL.GLUT import *
 from OpenGL.GL import *
 from OpenGL.GLU import *
 from opengl import WINDOW_SIZE
-from point_click import RayPicker
+from point_click import RayPicker, pick
 from surfaces.control_polyhedron import control_polyhedron
 from surfaces.bezier import BezierSurfaceModel
 from surfaces.bspline import BsplineSurfaceModel
@@ -93,13 +93,19 @@ def mouseFunction(button, state, x, y):
             print(f"World coordinates: {get_world_coordinates(base_point.get_coords_tuple())}")
             print("click coords: ", x, y)
             print("corrigated click coords: ", x, WINDOW_SIZE[1] - y)
-            if ray_picker.pick(x, y, base_point.get_coords_numerical(), 0.15):
+
+
+
+            if pick(x, y, base_point.get_coords_tuple()):
                 print("point was clicked")
 
-            # for row_index, row in enumerate(control_polyhedron.get_control_points()):
-            #     for index, point in enumerate(row):                    
-            #         if ray_picker.pick(x, y, point, 0.1):
-            #             control_polyhedron._control_points[row_index][index].toggle_selected()
-            #             glutPostRedisplay()
-            #             print(f"Point selected: {point}")
-            #             return
+            for row_index, row in enumerate(control_polyhedron.get_control_points()):
+                for index, point in enumerate(row):                    
+                    if pick(x, y, point.get_coords_tuple()):
+                        control_polyhedron.select_point(row_index, index)
+                        glutPostRedisplay()
+                        print(f"Point selected: {point}")
+                        return
+                    else:
+                        control_polyhedron.deselect_point()
+                        glutPostRedisplay()

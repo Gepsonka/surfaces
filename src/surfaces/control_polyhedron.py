@@ -20,6 +20,8 @@ class ControlPolyhedron:
         self._show_control_points_frame = True
         self._show_center_point = True
 
+        self._selected_point = None
+
         self._process_init_control_points(control_points)
 
     def draw(self):
@@ -150,8 +152,24 @@ class ControlPolyhedron:
 
         return buffer_list
 
-    def check_click(self):
-        pass
+    def select_point(self, i, j):
+        if self._selected_point:
+            self._selected_point.toggle_selected()
+        self._selected_point = self._control_points[i][j]
+        self._selected_point.toggle_selected()
+
+    def get_selected_point(self):
+        return self._selected_point
+    
+    def deselect_point(self):
+        if self._selected_point is not None:
+            self._selected_point.toggle_selected()
+            self._selected_point = None
+
+    def change_move_axis(self, axis):
+        if self._selected_point is not None:
+            self._selected_point.change_move_axis(axis)
+        
 
 
 control_polyhedron = ControlPolyhedron()
