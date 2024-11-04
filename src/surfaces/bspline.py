@@ -40,7 +40,12 @@ class BsplineSurfaceModel(SurfaceModel):
                 basis_u = self._surface_function(u, i, self._degree_u, self._knot_u)
                 basis_v = self._surface_function(v, j, self._degree_v, self._knot_v)
 
-                surface_point += basis_u * basis_v * self.control_polyhedron.get_control_points()[i][j].get_coords_numerical()
+                surface_point += basis_u * basis_v * (self.control_polyhedron.get_control_points()[i][j].get_coords_numerical())
+
+        if surface_point == np.zeros(3):
+            print('u', u)
+            print('v', v)
+
 
         return surface_point
 

@@ -104,7 +104,7 @@ def specialKeyboardFunction(key, x: int, y: int):
         surface._rotate_angle_y -= ROTATE_SENSITIVITY_ANGLE
         glutPostRedisplay()
 
-
+# FOR DEBUG PURPOSES!!
 def get_screen_coordinates(point):
     # Get the current matrices and viewport
     modelview = glGetDoublev(GL_MODELVIEW_MATRIX)
@@ -115,6 +115,8 @@ def get_screen_coordinates(point):
     window_coordinates = gluProject(point[0], point[1], point[2], modelview, projection, viewport)
     return window_coordinates
 
+
+# FOR DEBUG PURPOSES!!
 def get_world_coordinates(point):
     # Get the current modelview matrix
     modelview = glGetDoublev(GL_MODELVIEW_MATRIX)
