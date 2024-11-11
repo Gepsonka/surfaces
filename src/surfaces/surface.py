@@ -3,19 +3,20 @@ import numpy as np
 from OpenGL.GL import *
 from OpenGL.GLU import *
 import math
-from surfaces.constants import DEFAULT_CONTROL_POINTS
+from surfaces.constants import DEFAULT_CONTROL_POINTS, DEFAULT_STEP
 from surfaces.control_polyhedron import ControlPolyhedron, control_polyhedron
 
 class SurfaceModel:
-    def __init__(self, control_polyhedon: ControlPolyhedron=control_polyhedron, step=0.1) -> None:
+    def __init__(self, control_polyhedon: ControlPolyhedron=control_polyhedron, step=DEFAULT_STEP) -> None:
         # Making sure the step covers the whole [0,1] interval
-        if (1 / step) % 1 != 0:
-            raise Exception("(1 / step) % 1 must be equal to 0!")
+        # if (1 / step) % 1 != 0:
+        #     raise Exception("(1 / step) % 1 must be equal to 0!")
 
         self._mesh_points: list[list[Point]] = []
 
         self.control_polyhedron: ControlPolyhedron = control_polyhedron
         self._step = step  # To step the parameters of the surface functions
+
 
     def _surface_function(self, t, index, n, knot: list[float] = []) -> float:
         """
@@ -27,7 +28,9 @@ class SurfaceModel:
         """Populates the _mesh_points data matrix"""
         self._mesh_points = []
 
-        u_range, v_range = np.arange(0, 1 + self._step, self._step), np.arange(0, 1 + self._step, self._step)
+        eps = 1e-16
+        u_range, v_range = np.linspace(0, 1-eps, self._step), np.linspace(0, 1-eps, self._step)
+
 
         buffer_list = []
 

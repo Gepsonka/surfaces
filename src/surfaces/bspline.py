@@ -1,5 +1,5 @@
 from surfaces.surface import SurfaceModel
-from surfaces.constants import DEFAULT_CONTROL_POINTS, DEFAULT_STEP
+from surfaces.constants import DEFAULT_CONTROL_POINTS, DEFAULT_DEGREE_U, DEFAULT_DEGREE_V, DEFAULT_STEP
 import numpy as np
 
 class BsplineSurfaceModel(SurfaceModel):
@@ -7,8 +7,8 @@ class BsplineSurfaceModel(SurfaceModel):
         self,
         control_points=DEFAULT_CONTROL_POINTS,
         step=DEFAULT_STEP,
-        degree_u=3,
-        degree_v=3,
+        degree_u=DEFAULT_DEGREE_U,
+        degree_v=DEFAULT_DEGREE_V,
     ):
         super().__init__(control_points, step)
         # h/k piece of knots in the each direction must hold: h = m + p + 1 (p is the degree)
@@ -19,7 +19,7 @@ class BsplineSurfaceModel(SurfaceModel):
         self._degree_u = degree_u  # degree in u direction
         self._degree_v = degree_v  # degree in v direction
 
-        # onlt needed for bspline
+        # knots needed for bspline
         self._knot_u = self._generate_uniform_knot_vector(self._m + 1, self._degree_u)
         self._knot_v = self._generate_uniform_knot_vector(self._n + 1, self._degree_v)
 
@@ -42,9 +42,8 @@ class BsplineSurfaceModel(SurfaceModel):
 
                 surface_point += basis_u * basis_v * (self.control_polyhedron.get_control_points()[i][j].get_coords_numerical())
 
-        if surface_point == np.zeros(3):
-            print('u', u)
-            print('v', v)
+        # if np.array_equal(surface_point ,np.zeros(3)):
+        #     print(f"u: {u}, v: {v}, i: {i}, j: {j}, basis_u: {basis_u}, basis_v: {basis_v}")
 
 
         return surface_point
@@ -82,6 +81,9 @@ class BsplineSurfaceModel(SurfaceModel):
             else:
                 second_term = ((knot[index + n + 1] - t) / (knot[index + n + 1] - knot[index + 1])) * \
                                 self._surface_function(t, index + 1, n - 1, knot)
+                
+        # if first_term + second_term == 0 and knot[index + n] != knot[index] and index + 1 < len(knot) - n:
+        #     print(f"t: {t}, index: {index}, n: {n}, knot: {knot}")
 
         return first_term + second_term
 
